@@ -1,4 +1,4 @@
-# --- Generated from ./.gitignores on Mon Dec 29 20:58:55 2025 ---
+# --- Generated from ./.gitignores on Tue Dec 30 16:07:47 2025 ---
 
 #############################################
 # A.gitignore
@@ -6244,5 +6244,3 @@ Backup_*
 __pycache__/
 *.py[cod]
 
-zoom_schedular/service_account.json
-zoom_schedular/service_account2.json
