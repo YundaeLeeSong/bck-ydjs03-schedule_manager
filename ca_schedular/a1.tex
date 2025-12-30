@@ -1,0 +1,146 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\begin{document}
+
+\section*{Newton’s Second Law (Dynamics)}
+
+Newton’s second law relates the net external force acting on an object to its mass and acceleration. Formally:
+\begin{equation}
+\sum \mathbf{F} = m\,\mathbf{a},
+\end{equation}
+where:
+\begin{itemize}
+    \item $\sum \mathbf{F}$ (often written as $\mathbf{F}_{\mathrm{net}}$) is the vector sum of all external forces,
+    \item $m$ is the mass of the object (a scalar),
+    \item $\mathbf{a}$ is the acceleration vector of the object.
+\end{itemize}
+Equivalently, one can write
+\begin{equation}
+\mathbf{a} \;=\; \frac{\sum \mathbf{F}}{m}.
+\end{equation}
+Thus, the acceleration of an object is directly proportional to the net force and inversely proportional to its mass.
+
+\subsection*{1. Constant Force (Uniform Acceleration)}
+When a single constant force $\mathbf{F}$ acts on an object of mass $m$, the acceleration is constant:
+\begin{equation}
+\mathbf{F} = m\,\mathbf{a}
+\quad\Longrightarrow\quad
+\mathbf{a} = \frac{\mathbf{F}}{m} = \text{constant}.
+\end{equation}
+Under uniform acceleration, the velocity and position evolve as:
+\begin{align}
+\mathbf{v}(t) &= \mathbf{v}_0 + \mathbf{a}\,t, \\
+\mathbf{r}(t) &= \mathbf{r}_0 + \mathbf{v}_0\,t + \tfrac{1}{2}\,\mathbf{a}\,t^2,
+\end{align}
+where $\mathbf{v}_0$ and $\mathbf{r}_0$ are the initial velocity and position, respectively.
+
+\subsubsection*{Example: Object in a Uniform Gravitational Field}
+Near Earth’s surface, an object of mass $m$ experiences a constant gravitational force:
+\begin{equation}
+\mathbf{F}_{g} = -\,m\,g\,\hat{y}, 
+\end{equation}
+where $g \approx 9.81~\mathrm{m/s^2}$ and $\hat{y}$ is the unit vector in the upward direction. By Newton’s second law:
+\begin{align}
+\sum \mathbf{F} &= \mathbf{F}_{g} = -\,m\,g\,\hat{y}, \\
+m\,\mathbf{a} &= -\,m\,g\,\hat{y}, \\
+\mathbf{a} &= -\,g\,\hat{y} = \text{constant}.
+\end{align}
+Hence, the object accelerates downward at $g$, and its kinematic equations (in one dimension) become:
+\begin{align}
+v_y(t) &= v_{y0} - g\,t, \\
+y(t)  &= y_0 + v_{y0}\,t - \tfrac{1}{2}\,g\,t^2.
+\end{align}
+
+\subsection*{2. Multiple Forces (Net Force Calculation)}
+If several forces act simultaneously, sum their vector contributions to find $\mathbf{F}_{\mathrm{net}}$:
+\begin{equation}
+\sum \mathbf{F} = \mathbf{F}_1 + \mathbf{F}_2 + \cdots + \mathbf{F}_n = m\,\mathbf{a}.
+\end{equation}
+In such scenarios, one often decomposes forces into components (e.g., along $\hat{x}$ and $\hat{y}$) to solve for acceleration in each direction.
+
+\subsubsection*{Example: Block on an Inclined Plane with Friction}
+Consider a block of mass $m$ on an incline at angle $\theta$ above horizontal. Forces acting on the block include:
+\begin{itemize}
+    \item Gravitational force:
+    \[
+    \mathbf{F}_{g} = -\,m\,g\,\hat{j}.
+    \]
+    \item Normal force (perpendicular to plane):
+    \[
+    \mathbf{F}_N = +\,m\,g\,\cos\theta \,\hat{n},
+    \]
+    where $\hat{n}$ is the unit vector normal to the surface.
+    \item Kinetic friction (if sliding), directed up the plane:
+    \[
+    \mathbf{F}_{f} = -\,\mu_{k}\,F_N\,\hat{t} 
+    = -\,\mu_{k}\,(m\,g\,\cos\theta)\,\hat{t},
+    \]
+    where $\mu_{k}$ is the coefficient of kinetic friction and $\hat{t}$ is the unit vector tangent (down the plane).
+\end{itemize}
+Decomposing gravitational force along and perpendicular to the plane:
+\begin{align}
+\mathbf{F}_{g,\parallel} &= -\,m\,g\,\sin\theta \,\hat{t}, \\
+\mathbf{F}_{g,\perp}    &= -\,m\,g\,\cos\theta \,\hat{n}.
+\end{align}
+Since $\mathbf{F}_N$ balances $\mathbf{F}_{g,\perp}$, the net perpendicular force is zero:
+\[
+\sum F_{\perp} = F_{N} + F_{g,\perp} = m\,g\,\cos\theta \;-\; m\,g\,\cos\theta = 0.
+\]
+Hence, no acceleration normal to the plane ($a_{\perp} = 0$). Along the plane, the net force is:
+\begin{equation}
+\sum F_{\parallel} 
+= F_{g,\parallel} + F_{f} 
+= \bigl(-\,m\,g\,\sin\theta \bigr) 
+  + \bigl(-\,\mu_{k}\,m\,g\,\cos\theta \bigr) 
+= -\,m\,g\,\bigl(\sin\theta + \mu_{k}\cos\theta \bigr).
+\end{equation}
+Applying Newton’s second law along $\hat{t}$:
+\begin{align}
+m\,a_{\parallel} 
+&= -\,m\,g\,\bigl(\sin\theta + \mu_{k}\cos\theta \bigr), \\
+a_{\parallel} 
+&= -\,g\,\bigl(\sin\theta + \mu_{k}\cos\theta \bigr).
+\end{align}
+The negative sign indicates the block accelerates down the plane if released from rest.
+
+\subsection*{3. Variable Force (Non‐Uniform Acceleration)}
+When a force varies with position, velocity, or time, acceleration is also non‐constant. In the most general form:
+\begin{equation}
+\sum \mathbf{F}(t,\,\mathbf{r},\,\mathbf{v}) = m\,\mathbf{a}(t),
+\end{equation}
+where $\mathbf{F}$ may be a function of time $t$, position $\mathbf{r}$, and velocity $\mathbf{v}$. One then solves a differential equation:
+\begin{equation}
+m\,\frac{d^2 \mathbf{r}}{dt^2} = \mathbf{F}\bigl(t,\mathbf{r}(t),\mathbf{v}(t)\bigr).
+\end{equation}
+
+\subsubsection*{Example: Drag Force on a Falling Object}
+A small object (e.g., a raindrop) falling through air experiences a drag force approximately proportional to the square of its speed:
+\begin{equation}
+\mathbf{F}_{d} = -\,c_{d}\,v^2\,\hat{v},
+\end{equation}
+where $c_{d}$ is a drag coefficient, $v = \|\mathbf{v}\|$, and $\hat{v} = \mathbf{v}/v$. The net force in the vertical ($\hat{y}$) direction:
+\begin{equation}
+\sum F_{y} = -\,m\,g \;-\; c_{d}\,v^2,
+\end{equation}
+with downward taken as negative. By Newton’s second law:
+\begin{equation}
+m\,\frac{dv}{dt} = -\,m\,g \;-\; c_{d}\,v^2.
+\end{equation}
+This yields a non‐linear ordinary differential equation that can be solved (analytically or numerically) to find $v(t)$, eventually approaching terminal velocity when $m\,dv/dt = 0$.
+
+\subsection*{Summary}
+Newton’s second law quantitatively links force, mass, and acceleration:
+\[
+\boxed{\sum \mathbf{F} \;=\; m\,\mathbf{a}.}
+\]
+\begin{itemize}
+    \item For a constant net force, acceleration is uniform: $\mathbf{a} = \mathbf{F}/m$.
+    \item When multiple forces act, sum their vector contributions to find $\mathbf{F}_{\mathrm{net}}$, then compute $\mathbf{a} = \mathbf{F}_{\mathrm{net}}/m$.
+    \item If forces vary with time, position, or velocity, one must solve $m\,d^2\mathbf{r}/dt^2 = \mathbf{F}(t,\,\mathbf{r},\,\mathbf{v})$ to determine the motion.
+\end{itemize}
+
+\end{document}
