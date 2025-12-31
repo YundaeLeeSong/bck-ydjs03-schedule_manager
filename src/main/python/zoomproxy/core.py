@@ -4,37 +4,54 @@ import requests
 import json
 from pathlib import Path
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
+from datetime import datetime, timezone
+from typing import Dict, Any, Optional
 import sys
 
 # Load .env
-ROOT_DIR = ""
-if getattr(sys, "frozen", False): ROOT_DIR = Path(sys._MEIPASS)
-env_path = ROOT_DIR / ".env"
-load_dotenv(dotenv_path=env_path)
+SRC_DIR = Path(sys._MEIPASS) if getattr(sys, "frozen", False) else Path("").resolve() # absolute path
+ENV_PATH = SRC_DIR / Path(".env")                                                     # absolute path to the .env file 
+from dotenv import load_dotenv                                       # dotenv is used to load the environment variables from the .env file
+load_dotenv(dotenv_path=ENV_PATH)
 
 class IZoomService(ABC):
     """Interface for Zoom Service."""
     @abstractmethod
-    def create_meeting(self, topic: str, start_time_str: str, duration_min: int):
+    def create_meeting(self, topic: str, start_time_str: str, duration_min: int) -> Dict[str, Any]:
+        """
+        Create a meeting.
+
+        Args:
+            topic (str): The meeting topic.
+            start_time_str (str): The start time in "YYYY-MM-DD HH:MM" format.
+            duration_min (int): Duration in minutes.
+
+        Returns:
+            Dict[str, Any]: The result dictionary from the API or an error dict.
+        """
         pass
 
 class RealZoomService(IZoomService):
     """Actual implementation using Zoom API."""
     def __init__(self):
-        self.account_id = os.getenv("ZOOM_ACCOUNT_ID")
-        self.client_id = os.getenv("ZOOM_CLIENT_ID")
-        self.client_secret = os.getenv("ZOOM_CLIENT_SECRET")
-        self.token = None
+        self.account_id: Optional[str] = os.getenv("ZOOM_ACCOUNT_ID")
+        self.client_id: Optional[str] = os.getenv("ZOOM_CLIENT_ID")
+        self.client_secret: Optional[str] = os.getenv("ZOOM_CLIENT_SECRET")
+        self.token: Optional[str] = None
     
-    def _get_token(self):
+    def _get_token(self) -> Optional[str]:
+        """
+        Authenticate with Zoom to get an access token.
+
+        Returns:
+            Optional[str]: The access token if successful, None otherwise.
+        """
         url = f"https://zoom.us/oauth/token?grant_type=account_credentials&account_id={self.account_id}"
         auth = (self.client_id, self.client_secret)
         try:
             response = requests.post(url, auth=auth)
             if response.status_code == 200:
-                self.token = response.json()["access_token"]
+                self.token = response.json().get("access_token")
                 return self.token
             else:
                 print(f"Zoom Auth Error: {response.text}")
@@ -43,7 +60,18 @@ class RealZoomService(IZoomService):
             print(f"Connection Error: {e}")
             return None
 
-    def create_meeting(self, topic: str, start_time_str: str, duration_min: int):
+    def create_meeting(self, topic: str, start_time_str: str, duration_min: int) -> Dict[str, Any]:
+        """
+        Create a scheduled meeting on Zoom.
+
+        Args:
+            topic (str): The meeting topic.
+            start_time_str (str): The start time in "YYYY-MM-DD HH:MM" format (assumed local).
+            duration_min (int): Duration in minutes.
+
+        Returns:
+            Dict[str, Any]: API response JSON or error dictionary.
+        """
         if not self.token:
             if not self._get_token():
                 return {"error": "Authentication failed"}
@@ -52,7 +80,6 @@ class RealZoomService(IZoomService):
         
         # Parse time string "YYYY-MM-DD HH:MM" (Local Time) -> UTC ISO Format
         try:
-            from datetime import timezone
             # 1. Parse naive string (assumed local)
             dt_naive = datetime.strptime(start_time_str, "%Y-%m-%d %H:%M")
             # 2. Make it aware (Local) using astimezone() without arguments
@@ -99,15 +126,26 @@ class ZoomProxy(IZoomService):
     Adds checking for credentials and logging.
     """
     def __init__(self):
-        self._real_service = None
+        self._real_service: Optional[RealZoomService] = None
     
-    def _get_service(self):
+    def _get_service(self) -> RealZoomService:
+        """Lazy load the real service."""
         if self._real_service is None:
-            # Lazy initialization
             self._real_service = RealZoomService()
         return self._real_service
 
-    def create_meeting(self, topic: str, start_time_str: str, duration_min: int):
+    def create_meeting(self, topic: str, start_time_str: str, duration_min: int) -> Dict[str, Any]:
+        """
+        Delegates meeting creation to the RealZoomService if credentials exist.
+
+        Args:
+            topic (str): The meeting topic.
+            start_time_str (str): The start time in "YYYY-MM-DD HH:MM" format.
+            duration_min (int): Duration in minutes.
+
+        Returns:
+            Dict[str, Any]: Result from RealZoomService or error if credentials missing.
+        """
         # Pre-check: Environment variables
         if not all([os.getenv("ZOOM_ACCOUNT_ID"), os.getenv("ZOOM_CLIENT_ID"), os.getenv("ZOOM_CLIENT_SECRET")]):
             return {"error": "Missing ZOOM credentials in .env file."}
