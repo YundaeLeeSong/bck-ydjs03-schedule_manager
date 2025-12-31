@@ -53,13 +53,13 @@ build_and_run() {
         echo "Image '$IMAGE_NAME' found. Skipping build."
     fi
 
+    # Determine command to run: use arguments if provided, else default to 'bash'
+    local cmd="${*:-bash}"
+
     echo ""
     echo "--------------------------------------------------------"
     echo "  Environment Ready!"
-    echo "  Commands to try inside container:"
-    echo "    1. Test:   ./runner.py test"
-    echo "    2. Build:  ./runner.py build  (Creates Linux executable)"
-    echo "    3. Run:    ./runner.py run    (Requires X11 forwarding)"
+    echo "  Starting container with command: $cmd"
     echo "--------------------------------------------------------"
     
     # Setup X11 Forwarding args (Best Effort)
@@ -74,7 +74,8 @@ build_and_run() {
     fi
     
     # Run interactive shell, mounting the current directory to /app
-    docker run --rm -it -v "$ROOT:/app" $X11_ARGS "$IMAGE_NAME"
+    # We use $cmd (unquoted) to allow arguments to be expanded correctly
+    docker run --rm -it -v "$ROOT:/app" $X11_ARGS "$IMAGE_NAME" $cmd
 }
 
 # ------------------------------------------------------------------
@@ -82,6 +83,7 @@ build_and_run() {
 # ------------------------------------------------------------------
 if [ -n "${1:-}" ]; then
     choice="$1"
+    shift # Remove the first argument (choice) so $@ contains the rest
 else
     echo "Tutor Scheduler - Docker Manager"
     echo "1. Run (Build if missing)"
@@ -91,8 +93,8 @@ else
 fi
 
 case "$choice" in
-    1) build_and_run;;
-    2) clean_image && build_and_run;;
+    1) build_and_run "$@";;
+    2) clean_image && build_and_run "$@";;
     3) clean_image && exit 0;;
     *) echo "Invalid choice. Exiting." && exit 1;;
 esac

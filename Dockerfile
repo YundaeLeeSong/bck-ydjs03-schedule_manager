@@ -5,6 +5,7 @@ FROM python:3.11-slim
 # dos2unix: ensures scripts run correctly regardless of host OS line endings
 # binutils: required by PyInstaller
 # libgl1/libegl1...: required for Qt GUI support on Linux
+# libgssapi-krb5-2: required for QtNetwork (SSL/GSSAPI)
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
     dos2unix \
@@ -24,6 +25,7 @@ RUN apt-get update \
     libxcb-shape0 \
     libxcb-cursor0 \
     libglib2.0-0 \
+    libgssapi-krb5-2 \
  && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
