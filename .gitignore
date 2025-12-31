@@ -1,4 +1,4 @@
-# --- Generated from ./.gitignores on Tue Dec 30 16:07:47 2025 ---
+# --- Generated from ./.gitignores on Wed Dec 31 02:12:51 2025 ---
 
 #############################################
 # A.gitignore
@@ -11,6 +11,7 @@ tmp*/
 remote*/
 VSLive*/
 vscode*/
+pyright*/
 cursor*/
 
 ################################################################
@@ -3044,8 +3045,8 @@ junit*.properties
 #############################################
 # ModelSim.gitignore
 #############################################
-# ignore ModelSim generated files and directories (temp files and so on)
-[_@]*
+# # ignore ModelSim generated files and directories (temp files and so on)
+# [_@]*
 
 # ignore compilation output of ModelSim
 *.mti
