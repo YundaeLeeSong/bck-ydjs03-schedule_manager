@@ -6,6 +6,7 @@ FROM python:3.11-slim
 # binutils: required by PyInstaller
 # libgl1/libegl1...: required for Qt GUI support on Linux
 # libgssapi-krb5-2: required for QtNetwork (SSL/GSSAPI)
+# libbrotli1: required for QtNetwork (HTTP compression)
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
     dos2unix \
@@ -26,6 +27,7 @@ RUN apt-get update \
     libxcb-cursor0 \
     libglib2.0-0 \
     libgssapi-krb5-2 \
+    libbrotli1 \
  && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
