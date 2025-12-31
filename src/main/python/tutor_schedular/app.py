@@ -16,7 +16,7 @@ class StageMain(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Tutoring Scheduler App")
-        self.setMinimumSize(1200, 980)
+        self.setMinimumSize(800, 600)
 
         # "scene" holds and manage transitions btw views.
         self.scene = QStackedWidget()
@@ -59,15 +59,15 @@ def main():
     """
     app = QApplication(sys.argv)
     app.setStyleSheet("""
-        QPushButton { padding: 8px; font-size: 20px; }
-        QLabel { font-size: 20px; }
-        QTableWidget { font-size: 20px; }
-        QLineEdit { font-size: 20px; }
-        QTextEdit { font-size: 20px; }
-        QListWidget { font-size: 20px; }
-        QCheckBox { font-size: 20px; }
-        QSpinBox { font-size: 20px; }
-        QDateTimeEdit { font-size: 20px; }
+        QPushButton { padding: 8px; font-size: 16px; }
+        QLabel { font-size: 16px; }
+        QTableWidget { font-size: 16px; }
+        QLineEdit { font-size: 16px; }
+        QTextEdit { font-size: 16px; }
+        QListWidget { font-size: 16px; }
+        QCheckBox { font-size: 16px; }
+        QSpinBox { font-size: 16px; }
+        QDateTimeEdit { font-size: 16px; }
     """)
     window = StageMain()
     window.show()
