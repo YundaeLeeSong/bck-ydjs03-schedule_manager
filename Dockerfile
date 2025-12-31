@@ -4,13 +4,13 @@ FROM python:3.11-slim
 # Install basic utilities and system libraries required for PySide6 (Qt)
 # dos2unix: ensures scripts run correctly regardless of host OS line endings
 # binutils: required by PyInstaller
-# libgl1.../libxcb...: required for Qt GUI support on Linux
+# libgl1/libegl1...: required for Qt GUI support on Linux
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
     dos2unix \
     binutils \
-    libgl1-mesa-glx \
-    libegl1-mesa \
+    libgl1 \
+    libegl1 \
     libxkbcommon-x11-0 \
     libdbus-1-3 \
     libxcb-icccm4 \
@@ -21,6 +21,8 @@ RUN apt-get update \
     libxcb-xinerama0 \
     libxcb-xinput0 \
     libxcb-xfixes0 \
+    libxcb-shape0 \
+    libxcb-cursor0 \
     libglib2.0-0 \
  && rm -rf /var/lib/apt/lists/*
 

@@ -80,11 +80,15 @@ build_and_run() {
 # ------------------------------------------------------------------
 # Main Logic: Menu
 # ------------------------------------------------------------------
-echo "Tutor Scheduler - Docker Manager"
-echo "1. Run (Build if missing)"
-echo "2. Rebuild & Run"
-echo "3. Clean (Remove image) & Exit"
-read -p "Enter choice [1-3]: " choice
+if [ -n "${1:-}" ]; then
+    choice="$1"
+else
+    echo "Tutor Scheduler - Docker Manager"
+    echo "1. Run (Build if missing)"
+    echo "2. Rebuild & Run"
+    echo "3. Clean (Remove image) & Exit"
+    read -p "Enter choice [1-3]: " choice
+fi
 
 case "$choice" in
     1) build_and_run;;
