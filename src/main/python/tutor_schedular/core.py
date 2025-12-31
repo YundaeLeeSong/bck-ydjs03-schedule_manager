@@ -1,5 +1,6 @@
 # ca_schedular/core.py
 
+from pathlib import Path
 import sys
 import os
 from datetime import datetime, timedelta, timezone
@@ -309,12 +310,14 @@ class StudentManagerWidget(QWidget):
             line = f"{date_str},{time_str},{full_ref},{s['duration']} {icon}"
             status_lines.append(line)
             
-            # Update latest (since sorted, last is latest)
-            latest_date = dt.strftime("%m/%d/%y")
+            # Update latest runtime (since sorted, last is latest)
             latest_runtime = str(s['duration'])
 
+        # Report date is today's date
+        report_date = datetime.now().strftime("%m/%d/%y")
+        
         context = {
-            "DATE": latest_date,
+            "DATE": report_date,
             "RUNTIME": latest_runtime,
             "STUDENT_NAME": student['name'],
             "STATUS_LIST": "\n".join(status_lines)
@@ -750,7 +753,26 @@ class MainWindow(QMainWindow):
         self.student_page.refresh_data()
         self.stacked_widget.setCurrentWidget(self.student_page)
 
+
+
+
+
+
+
+ROOT_DIR = ""
+if getattr(sys, "frozen", False): ROOT_DIR = Path(sys._MEIPASS)
+    
 def main():
+    # # display __file__ path
+    # print(f"__file__ path: {Path(__file__).resolve()}")
+    # # __file__ path: C:\Users\ydlee\AppData\Local\Temp\_MEI68002\tutor_schedular\core.py
+
+    # # display root of the project
+    # print(f"root of the project: {ROOT_DIR}")
+    # # root of the project: C:\Users\ydlee\AppData\Local\Temp\_MEI68002
+
+
+
     app = QApplication(sys.argv)
     app.setStyleSheet("""
         QPushButton { padding: 8px; font-size: 20px; }

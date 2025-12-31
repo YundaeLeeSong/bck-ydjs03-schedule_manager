@@ -2,12 +2,17 @@
 import os
 import requests
 import json
+from pathlib import Path
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+import sys
 
-# Load env vars
-load_dotenv()
+# Load .env
+ROOT_DIR = ""
+if getattr(sys, "frozen", False): ROOT_DIR = Path(sys._MEIPASS)
+env_path = ROOT_DIR / ".env"
+load_dotenv(dotenv_path=env_path)
 
 class IZoomService(ABC):
     """Interface for Zoom Service."""

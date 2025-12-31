@@ -3,12 +3,18 @@ import os
 import smtplib
 import ssl
 import mimetypes
+from pathlib import Path
 from abc import ABC, abstractmethod
 from email.message import EmailMessage
 from typing import List, Optional, Tuple
 from dotenv import load_dotenv
+import sys
 
-load_dotenv()
+# Load .env
+ROOT_DIR = ""
+if getattr(sys, "frozen", False): ROOT_DIR = Path(sys._MEIPASS)
+env_path = ROOT_DIR / ".env"
+load_dotenv(dotenv_path=env_path)
 
 class IEmailService(ABC):
     @abstractmethod
