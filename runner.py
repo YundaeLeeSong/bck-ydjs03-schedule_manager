@@ -171,18 +171,30 @@ class TaskRunner:
         print("\nConfiguring sys.path...")
         paths_to_add = []
         
-        # Add src/main/python and src/test/python
-        for p in [SRC_MAIN, SRC_TEST] + LIB_DIRS:
-            if p.exists() and str(p.absolute()) not in sys.path:
-                paths_to_add.append(p.absolute())
+        # Normalize sys.path for comparison (handle Windows path format differences)
+        sys_path_normalized = {Path(p).resolve() for p in sys.path if Path(p).exists()}
+        
+        # Check all directories
+        all_dirs = [SRC_MAIN, SRC_TEST] + LIB_DIRS
+        print("Checking directories:")
+        for p in all_dirs:
+            abs_path = p.resolve() if p.exists() else None
+            if abs_path:
+                if abs_path not in sys_path_normalized:
+                    paths_to_add.append(abs_path)
+                    print(f"  ✓ {p} -> {abs_path} (will be added)")
+                else:
+                    print(f"  - {p} -> {abs_path} (already in sys.path)")
+            else:
+                print(f"  ✗ {p} (not found)")
 
         if paths_to_add:
             self._update_pth_file(paths_to_add)
-            print("Added paths to local-packages.pth:")
+            print("\nAdded paths to local-packages.pth:")
             for p in paths_to_add:
                 print(f"  + {p}")
         else:
-            print("  (No new paths to add)")
+            print("\n  (No new paths to add)")
 
         print("\nCurrent sys.path:")
         for p in sys.path[:5]: # Show first 5
@@ -240,6 +252,9 @@ class TaskRunner:
         
         # Generate requirements
         print("\nGenerating requirements.txt...")
+        # Reinstall pipreqs to fix any broken launcher scripts (especially on Windows)
+        self._run_cmd(f"{self.python_exe} -m pip install --force-reinstall --no-deps pipreqs")
+        # Now call pipreqs normally
         self._run_cmd("pipreqs . --force --ignore ext,docs,doc,scripts,script,downloads,build,dist")
         
         # Install requirements
@@ -254,6 +269,8 @@ class TaskRunner:
         try:
             # Run PyInstaller
             print("\nRunning PyInstaller...")
+            # Reinstall PyInstaller to fix any broken launcher scripts (especially on Windows)
+            self._run_cmd(f"{self.python_exe} -m pip install --force-reinstall --no-deps PyInstaller")
             
             # Construct search paths for PyInstaller
             search_paths = [str(SRC_MAIN.absolute())]
@@ -288,9 +305,16 @@ class TaskRunner:
             return
         
         print(f"Running tests in {SRC_TEST}...")
-        # Add src/main/python to python path for tests
+        # Build PYTHONPATH with src/main/python and lib directories
         env = os.environ.copy()
-        env["PYTHONPATH"] = f"{SRC_MAIN.absolute()}{os.pathsep}{env.get('PYTHONPATH', '')}"
+        pythonpath_parts = [str(SRC_MAIN.absolute())]
+        for lib_dir in LIB_DIRS:
+            if lib_dir.exists():
+                pythonpath_parts.append(str(lib_dir.absolute()))
+        # Add existing PYTHONPATH if present
+        if env.get('PYTHONPATH'):
+            pythonpath_parts.append(env['PYTHONPATH'])
+        env["PYTHONPATH"] = os.pathsep.join(pythonpath_parts)
         
         cmd = f"{self.python_exe} -m unittest discover -s {SRC_TEST} -v"
         subprocess.run(cmd, shell=True, env=env)
@@ -308,8 +332,15 @@ class TaskRunner:
 
         print(f"Running {self.ctx.app_package}...")
         env = os.environ.copy()
-        # Ensure src/main/python is in path
-        env["PYTHONPATH"] = f"{SRC_MAIN.absolute()}{os.pathsep}{env.get('PYTHONPATH', '')}"
+        # Build PYTHONPATH with src/main/python and lib directories
+        pythonpath_parts = [str(SRC_MAIN.absolute())]
+        for lib_dir in LIB_DIRS:
+            if lib_dir.exists():
+                pythonpath_parts.append(str(lib_dir.absolute()))
+        # Add existing PYTHONPATH if present
+        if env.get('PYTHONPATH'):
+            pythonpath_parts.append(env['PYTHONPATH'])
+        env["PYTHONPATH"] = os.pathsep.join(pythonpath_parts)
         
         try:
             subprocess.run(f"{self.python_exe} -m {self.ctx.app_package}", shell=True, env=env)
